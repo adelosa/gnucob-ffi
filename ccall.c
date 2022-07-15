@@ -25,12 +25,16 @@ void ccall(struct linkage1 * linkage1) {
 
 int call_cobmodule(char * module, int num_linkage_areas, void ** linkage_areas) {  
 
-    // Link acty, get COB module pointer
+    // Link acty, get COBOL function pointer
     cobmodule = cob_resolve(module);
     if(cobmodule == NULL) {
         fprintf(stderr, "call_cobmodule: %s\n", cob_resolve_error());
         return -1;
     }
+
+    // Tell the runtime about the numbers of parameters passed
+    // (necessary for GnuCOBOL < 4) to support IF param OMITTED
+    cob_get_global_ptr()->cob_call_params = num_linkage_areas;
 
     // Initialize the datagroup argument vectors
     ffi_cif cif;
